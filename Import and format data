@@ -1,0 +1,43 @@
+folder_dir="C:/Users/erik.johansson/Dropbox/Ansökningar/transferwise/TW-CaseStudy2/csv"
+files_dir=paste(folder_dir, "/", list.files(folder_dir), sep="")
+
+###IMPORT DATA
+raw_data=list()
+for(i in 1:length(files_dir)){
+  raw_data[[i]]=read.csv(files_dir[i], sep=";")
+}
+
+assignment_data_set=raw_data[[1]]
+country_names=raw_data[[2]]
+survey_responses=raw_data[[3]]
+users=raw_data[[4]]
+user_referral=raw_data[[5]]
+
+
+###FORMAT DATA
+#Format assignment_data_set
+#\0 assumed to be missing values
+
+format_TW=function(data, numeric_columns=vector(), datetime_columns=vector()){
+  for(i in 1:ncol(data)){
+    data[,i]=as.character(data[,i])
+    data[which(data[,i]=="\\0"),i]=NA
+  }
+
+#Numeric values
+  for(i in numeric_columns){
+    data[,i]=as.numeric(data[,i])
+  }
+
+#Dates
+  for(i in datetime_columns){
+    data[,i]=as.POSIXct(data[,i], format="%d.%m.%Y %H:%M", tz="GMT")
+  }
+  return(data)
+}
+
+assignment_data_set=format_TW(raw_data[[1]], numeric_columns=c(16,17), datetime_columns=c(4,9))
+country_names=format_TW(raw_data[[2]])
+survey_responses=format_TW(raw_data[[3]])
+users=format_TW(raw_data[[4]])
+user_referral=format_TW(raw_data[[5]], numeric_columns=c(9,10), datetime_columns=c(4, 5))
