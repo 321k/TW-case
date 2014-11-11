@@ -1,12 +1,21 @@
-folder_dir="C:/Users/erik.johansson/Downloads/TW-CaseStudy2/TW-CaseStudy2/csv"
+folder_dir="C:/Users/erik.johansson/Dropbox/Ansökningar/transferwise/TW-CaseStudy2/csv"
 files_dir=paste(folder_dir, "/", list.files(folder_dir), sep="")
 
+#Import data
 assignment_data_set=read.csv(files_dir[1], sep=";")
 country_names=read.csv(files_dir[2], sep=";")
 survey_responses=read.csv(files_dir[3], sep=";")
 users=read.csv(files_dir[4], sep=";")
 user_referral=read.csv(files_dir[5], sep=";")
 
+#Format data
 for(i in 1:ncol(assignment_data_set)){
-assignment_data_set[which(assignment_data_set[,i]=="\\0"),i]=="NA"
+assignment_data_set[,i]=as.character(assignment_data_set[,i])
 }
+
+assignment_data_set[,1]=as.character(assignment_data_set[,1])
+assignment_data_set[,1]=as.character(assignment_data_set[,1])
+assignment_data_set[,1]=as.character(assignment_data_set[,1])
+
+
+assignment_data_set[which(assignment_data_set[,i]=="\\0"),i]=="NA"
