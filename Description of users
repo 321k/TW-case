@@ -1,0 +1,42 @@
+library(ggplot2)
+library(maps)
+library(dplyr)
+library(rworldmap)
+
+#Description of users
+#Age
+qplot(users$user_age_years_bucket)
+
+#Plot country in rising order
+temp_country=factor(users$user_addr_country, levels=names(sort(table(users$user_addr_country))))
+qplot(temp_country)
+
+#Create map
+#Documentation: http://journal.r-project.org/archive/2011-1/RJournal_2011-1_South.pdf
+temp_world=as.data.frame(users$user_addr_country)
+temp_world[2]=NA
+temp_world[3]=as.data.frame(users$user_lifetime_transfers)
+temp_world[4]=as.data.frame(users$user_lifetime_revenue)
+for(i in 1:nrow(temp_world)){
+  temp_world[i,2]=country_names[which(country_names[,2]==temp_world[i,1]),3]
+}
+
+names(temp_world)=c("Short country", "Country", "Transfers", "Revenue")
+
+world_data=as.data.frame(unique(temp_world[,1]))
+world_data[2]=NA
+world_data[3]=NA
+world_data[4]=NA
+names(world_data)=c("Country", "Users", "Transfers", "Revenue"
+)
+for(i in 1:nrow(world_data)){
+  world_data[i,2]=length(which(temp_world[,1]==world_data[i,1]))
+  world_data[i,3]=sum(as.numeric(as.character((temp_world[(which(temp_world[,1]==world_data[i,1])),3]))))
+  world_data[i,4]=sum(as.numeric(as.character((temp_world[(which(temp_world[,1]==world_data[i,1])),4]))))
+}
+world_data[,1]=as.character(world_data[,1])
+world_data[,2]=as.numeric(world_data[,2])
+
+world_map=joinCountryData2Map(world_data, joinCode="ISO3", nameJoinColumn="Country")
+mapDevice()
+mapCountryData(world_map, nameColumnToPlot="Users")
