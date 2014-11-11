@@ -4,7 +4,7 @@ files_dir=paste(folder_dir, "/", list.files(folder_dir), sep="")
 ###IMPORT DATA
 raw_data=list()
 for(i in 1:length(files_dir)){
-  raw_data[[i]]=read.csv(files_dir[i], sep=";")
+  raw_data[[i]]=read.csv(files_dir[i], sep=";", dec=",")
 }
 
 assignment_data_set=raw_data[[1]]
