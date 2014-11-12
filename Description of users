@@ -12,7 +12,7 @@ qplot(users$user_age_years_bucket, xlab="Age group")
 #qplot(temp_country)
 
 ###Sign ups
-qplot(users$user_create_timestam)p
+qplot(users$user_create_timestamp)
 
 ###Map of where the users are from
 #Documentation: http://journal.r-project.org/archive/2011-1/RJournal_2011-1_South.pdf
@@ -45,3 +45,4 @@ mapDevice()
 mapCountryData(world_map, nameColumnToPlot="Users")
 #mapCountryData(world_map, nameColumnToPlot="Transfers")
 #mapCountryData(world_map, nameColumnToPlot="Revenue")
+
