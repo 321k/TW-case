@@ -15,7 +15,6 @@ user_referral=raw_data[[5]]
 
 
 ###FORMAT DATA
-#Format assignment_data_set
 #\0 assumed to be missing values
 
 format_TW=function(data, numeric_columns=vector(), datetime_columns=vector()){
