@@ -7,7 +7,7 @@ for(i in 1:length(files_dir)){
   raw_data[[i]]=read.csv(files_dir[i], sep=";", dec=",")
 }
 
-assignment_data_set=raw_data[[1]]
+referral_weekly_data=raw_data[[1]]
 country_names=raw_data[[2]]
 survey_responses=raw_data[[3]]
 users=raw_data[[4]]
@@ -34,8 +34,8 @@ format_TW=function(data, numeric_columns=vector(), datetime_columns=vector()){
   return(data)
 }
 
-assignment_data_set=format_TW(raw_data[[1]], numeric_columns=c(16,17), datetime_columns=c(4,9))
-country_names=format_TW(raw_data[[2]])
+country_names=format_TW(raw_data[[1]])
+referral_weekly_data=format_TW(raw_data[[2]], numeric_columns=c(16,17), datetime_columns=c(4,9))
 survey_responses=format_TW(raw_data[[3]])
 users=format_TW(raw_data[[4]], numeric_columns=c(6,7), datetime_columns=c(2))
 user_referral=format_TW(raw_data[[5]], numeric_columns=c(9,10), datetime_columns=c(4, 5))
