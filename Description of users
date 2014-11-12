@@ -3,15 +3,18 @@ library(maps)
 library(dplyr)
 library(rworldmap)
 
-#Description of users
-#Age
-qplot(users$user_age_years_bucket)
+###Description of users
+###Age
+qplot(users$user_age_years_bucket, xlab="Age group")
 
 #Plot country in rising order
-temp_country=factor(users$user_addr_country, levels=names(sort(table(users$user_addr_country))))
-qplot(temp_country)
+#temp_country=factor(users$user_addr_country, levels=names(sort(table(users$user_addr_country))))
+#qplot(temp_country)
 
-#Create map
+###Sign ups
+qplot(users$user_create_timestam)p
+
+###Map of where the users are from
 #Documentation: http://journal.r-project.org/archive/2011-1/RJournal_2011-1_South.pdf
 temp_world=as.data.frame(users$user_addr_country)
 temp_world[2]=NA
@@ -40,3 +43,5 @@ world_data[,2]=as.numeric(world_data[,2])
 world_map=joinCountryData2Map(world_data, joinCode="ISO3", nameJoinColumn="Country")
 mapDevice()
 mapCountryData(world_map, nameColumnToPlot="Users")
+#mapCountryData(world_map, nameColumnToPlot="Transfers")
+#mapCountryData(world_map, nameColumnToPlot="Revenue")
