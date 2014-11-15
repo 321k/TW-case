@@ -1,0 +1,35 @@
+library(ggplot2)
+library(vcd)
+temp=survey_responses
+boxplot(temp[,3])
+
+product_use=temp[which(temp[,2]=="Product Use: Purpose"),]
+temp=temp[-which(temp[,2]=="Product Use: Purpose"),]
+demographics_1st=temp[which(temp[,2]=="Demographics: 1st Country"),2:3]
+demographics_1st[,1]=as.character(demographics_1st[,1])
+barplot(table(demographics_1st))
+
+experience=temp[which(temp[,2]=="Experience Made Me Feel"),2:3]
+experience[,1]=as.character(experience[,1])
+barplot(table(experience)[,c(2,4,1,3)])
+
+survey_revolutionaries=temp[which(temp[,3]=="made me feel like I'm part of a revolution"),1]
+
+
+
+temp=demographics_1st[2]
+temp[2]=experience[2]
+
+#Remove countries with less than five respondents
+#remove=names(which(table(temp[1])>10))
+
+#for(i in 1:length(remove)){
+#  temp=temp[-which(temp[,1]==remove[i]),]
+#}
+names(temp)=c("Country", "Response")
+temp_table=table(temp)
+
+for(i in 1:length(dimnames(temp_table)$Response)) dimnames(temp_table)$Response[i]=NA
+
+plot(temp_table, col=terrain.colors(4), xlab="Country", ylab="Response", main="Experience made me feel", axis(las=2))
+legend(x="bottom", legend=unique(temp[,2]), fill=terrain.colors(4), bg="white")
