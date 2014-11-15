@@ -1,17 +1,17 @@
 library(igraph)
 
-#By user
-temp=user_referral[c(1,3)]
-g=graph.data.frame(temp)
-temp[,1]=as.character(temp[,1])
-temp[,2]=as.character(temp[,2])
-bad.g=V(g)[degree(g)<1]
-g<-delete.vertices(g, bad.g)
+###By user (depreciated since it is not possible to go beyond the first invite
+#temp=user_referral[c(1,3)]
+#g=graph.data.frame(temp)
+#temp[,1]=as.character(temp[,1])
+#temp[,2]=as.character(temp[,2])
+#bad.g=V(g)[degree(g)<1]
+#g<-delete.vertices(g, bad.g)
 
-plot(g, vertex.size=2, edge.arrow.size=0.5, vertex.label=NA)
-tkplot(g, vertex.size=2, edge.arrow.size=0.5,vertex.label=NA)
+#plot(g, vertex.size=2, edge.arrow.size=0.5, vertex.label=NA)
+#tkplot(g, vertex.size=2, edge.arrow.size=0.5,vertex.label=NA)
 
-#By country
+###By country
 temp=user_referral[c(1,7)]
 temp=temp[which(is.na(temp[,1])==FALSE),]
 temp=temp[which(is.na(temp[,2])==FALSE),]
@@ -23,17 +23,14 @@ temp[i,2]=as.character(country_names[which(as.character(country_names[,1])==temp
 temp[i,1]=as.character(users[which(users[,1]==temp[i,1]),3])
 }
 
+#All
 g=graph.data.frame(temp, directed=T)
-plot(g, vertex.size=15, edge.arrow.size=0.5, layout=layout.circle)
-
 plot.igraph(g,vertex.size=15, edge.arrow.size=0.5, layout=layout.circle)
 
-#Remove non interesting ones
+#Remove countries with few referrals
 #Source https://rulesofreason.wordpress.com/tag/plot-igraph/
+g=graph.data.frame(temp, directed=T)
 bad.g=V(g)[degree(g)<20]
 g<-delete.vertices(g, bad.g)
-
-#V(g)$color<-"grey
-#E(g)$color<-ifelse(E(g)$grade==1, "red", "grey")
-#E(g)$color<-ifelse(E(g)$spec=='X', "red", ifelse(E(bsk.network)$spec=='Y', "green", "grey"))
 plot.igraph(g,vertex.size=15, edge.arrow.size=0.5, layout=layout.circle)
+
