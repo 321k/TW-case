@@ -1,18 +1,7 @@
-library(ggplot2)
-library(maps)
-library(dplyr)
+#library(ggplot2)
+#library(maps)
+#library(dplyr)
 library(rworldmap)
-
-###Description of users
-###Age
-qplot(users$user_age_years_bucket, xlab="Age group")
-
-#Plot country in rising order
-#temp_country=factor(users$user_addr_country, levels=names(sort(table(users$user_addr_country))))
-#qplot(temp_country)
-
-###Sign ups
-qplot(users$user_create_timestamp)
 
 ###Map of where the users are from
 #Documentation: http://journal.r-project.org/archive/2011-1/RJournal_2011-1_South.pdf
@@ -21,7 +10,7 @@ temp_world[2]=NA
 temp_world[3]=as.data.frame(users$user_lifetime_transfers)
 temp_world[4]=as.data.frame(users$user_lifetime_revenue)
 for(i in 1:nrow(temp_world)){
-  temp_world[i,2]=country_names[which(country_names[,2]==temp_world[i,1]),3]
+  temp_world[i,2]=as.character(country_names[which(as.character(country_names[,2])==temp_world[i,1]),3])
 }
 
 names(temp_world)=c("Short country", "Country", "Transfers", "Revenue")
