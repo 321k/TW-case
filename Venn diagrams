@@ -1,0 +1,76 @@
+temp=survey_responses
+survey_revolutionaries=temp[which(temp[,3]=="made me feel like I'm part of a revolution"),1]
+
+temp=user_referral
+super_inviters=names(which(table(temp[,1])>4))
+
+temp=as.data.frame(super_inviters)
+temp[2]="Super inviters"
+names(temp)=c("id", "Type")
+
+user_data=temp
+
+temp=as.data.frame(survey_revolutionaries)
+temp[2]="Revolutionaries"
+names(temp)=c("id", "Type")
+
+user_data=rbind(user_data, temp)
+user_data=user_data[c(2,1)]
+user_data[,2]=as.character(user_data[,2])
+
+###Venn diagrams
+
+library(VennDiagram)
+#Overlap between users and super inviters
+area1=length(super_inviters)
+area2=length(users$id_user)
+cross.area=length(intersect(survey_revolutionaries, users$id_user))
+draw.pairwise.venn(area1, area2, cross.area, category=c("Super inviters", "All users"), fill=c("blue", "red"),  cat.pos = c(0, 180))
+
+#Overlap between users and revolutionaries
+area1=length(survey_revolutionaries)
+area2=length(users$id_user)
+cross.area=length(intersect(survey_revolutionaries, users$id_user))
+draw.pairwise.venn(area1, area2, cross.area, category=c("Revolutionaries", "All users"), fill=c("blue", "red"),  cat.pos = c(0, 180))
+
+#Overlap between users and survey respondents
+area1=length(unique(survey_responses$id_user))
+area2=length(users$id_user)
+cross.area=length(intersect(survey_revolutionaries, users$id_user))
+draw.pairwise.venn(area1, area2, cross.area, category=c("Survey respondents", "All users"), fill=c("blue", "red"),  cat.pos = c(0, 180))
+
+#Overlap between super inviters and revolutionaries
+area1=length(super_inviters)
+area2=length(survey_revolutionaries)
+cross.area=length(intersect(survey_revolutionaries, super_inviters))
+draw.pairwise.venn(area1, area2, cross.area, category=c("Super inviters", "Revolutionaries"), fill=c("blue", "red"),  cat.pos = c(0, 180))
+
+#Overlap between users and referrers
+area1=length(unique(user_referral$id_user))
+area2=length(users$id_user)
+cross.area=length(intersect(users$id_user, unique(user_referral$id_user)))
+draw.pairwise.venn(area1, area2, cross.area, category=c("Referrals", "All users"), fill=c("blue", "red"),  cat.pos = c(0, 180))
+
+#Overlap between users and referred users
+area1=length(unique(user_referral$id_referral))
+area2=length(users$id_user)
+cross.area=length(intersect(users$id_user, unique(user_referral$id_referral)))
+draw.pairwise.venn(area1, area2, cross.area, category=c("Referred", "All users"), fill=c("blue", "red"),  cat.pos = c(0, 180))
+
+#Overlap between users and weekly referrals
+area1=length(unique(referral_weekly_data$id_user))
+area2=length(users$id_user)
+cross.area=length(intersect(users$id_user, unique(referral_weekly_data$id_user)))
+draw.pairwise.venn(area1, area2, cross.area, category=c("Referrer weekly", "All users"), fill=c("blue", "red"),  cat.pos = c(0, 180))
+
+#Overlap between users and weekly referred
+area1=length(unique(referral_weekly_data$id_referral))
+area2=length(users$id_user)
+cross.area=length(intersect(users$id_user, unique(referral_weekly_data$id_referral)))
+draw.pairwise.venn(area1, area2, cross.area, category=c("Referred weekly", "All users"), fill=c("blue", "red"),  cat.pos = c(0, 180))
+
+#Overlap between user referral (referred) and weekly referred
+area1=length(unique(referral_weekly_data$id_referral))
+area2=length(unique(user_referral$id_referral))
+cross.area=length(intersect(unique(user_referral$id_referral), unique(referral_weekly_data$id_referral)))
+draw.pairwise.venn(area1, area2, cross.area, category=c("Referred weekly", "All users"), fill=c("blue", "red"),  cat.pos = c(0, 180))
