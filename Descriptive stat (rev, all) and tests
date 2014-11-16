@@ -1,0 +1,47 @@
+#all_ref_table[,3]
+#all_rev_table[,3]
+
+library(tseries)
+library(pastecs)
+library(e1071)
+
+temp_ref=all_ref_table
+temp_ref[ncol(temp_ref)+1]="All users"
+names(temp_ref)[ncol(temp_ref)]="Type"
+
+temp_rev=all_rev_table
+temp_rev[ncol(temp_rev)+1]="Revolutionaries"
+names(temp_rev)[ncol(temp_rev)]="Type"
+
+all_table=rbind(temp_ref, temp_rev)
+names(all_table)=c("id_user", "referrals", "av_rev_day", "av_rev_day_user", "tot_rev", "type")
+
+for(i in 2:5){
+  all_table[,i]=log(all_table[,i])
+}
+
+#Histogram
+ggplot(all_table, aes(x=av_rev_day, colour=type)) + geom_density()
+
+#Jarque bera test
+temp_ref=all_table[which(all_table$type=="All users"),]
+temp_ref=temp_ref[which(is.finite(temp_ref[,3])),]
+temp_rev=all_table[which(all_table$type=="Revolutionaries"),]
+temp_rev=temp_rev[which(is.finite(temp_rev[,3])),]
+
+#Normality test
+jarque.bera.test(temp_rev[,3])
+jarque.bera.test(temp_ref[,3])
+
+kurtosis(temp_rev[,3])
+kurtosis(temp_ref[,3])
+skewness(temp_rev[,3])
+skewness(temp_ref[,3])
+#Boxplot
+ggplot(all_table, aes(x=type, y=av_rev_day)) + geom_boxplot()
+
+#Test!
+t.test(temp_rev[,2], temp_ref[,2])
+t.test(temp_rev[,3], temp_ref[,3])
+t.test(temp_rev[,4], temp_ref[,4])
+t.test(temp_rev[,5], temp_ref[,5])
