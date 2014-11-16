@@ -24,7 +24,7 @@ format_TW=function(data, numeric_columns=vector(), datetime_columns=vector()){
 
 #Numeric values
   for(i in numeric_columns){
-    data[,i]=as.numeric(data[,i])
+    data[,i]=as.numeric(sub(",", ".", as.character(data[,i])), fixed=TRUE)
   }
 
 #Dates
