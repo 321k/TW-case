@@ -1,0 +1,56 @@
+#Super inviters
+super_inviters=names(which(table(survey_responses[,1])>4))
+
+#Revolutionaries
+survey_revolutionaries=survey_responses[which(survey_responses[,3]=="made me feel like I'm part of a revolution"),1]
+revolutionaries=users[users[,1] %in% survey_revolutionaries,]
+
+#All referrers
+all_referrers=unique(referral_weekly_data[c(1, 8)])
+all_referrers=all_referrers[c(2,1)]
+all_referrers_table=as.data.frame(table(all_referrers[,1]))
+names(all_referrers_table)=c("Age", "Frequency")
+ggplot(all_referrers_table, aes(x=Age, y=Frequency))+geom_bar(stat="identity", fill="#00C6FF", color="black")
+
+#Age distribution
+revolutionaries_table=revolutionaries[,5]
+revolutionaries_table=as.data.frame(table(revolutionaries_table))
+names(revolutionaries_table)=c("Age", "Frequency")
+ggplot(revolutionaries_table, aes(x=Age, y=Frequency))+geom_bar(stat="identity", fill="#00C6FF", color="black")
+
+#Compare all_referrers and the revolutionaries
+temp_rev=revolutionaries_table
+temp_rev[,1]=as.character(temp_rev[,1])
+
+#Add missing data to make presentation nicer
+temp_rev[nrow(temp_rev)+1,1]="1. Under 18"
+temp_rev[nrow(temp_rev),2]=0
+
+temp_rev[3]="Revolutionaries"
+temp_rev=temp_rev[c(3,1,2)]
+temp_rev[4]=NA
+names(temp_rev)=c("Type", "Age", "Frequency", "Percentage")
+
+#Calculate percentage
+for(i in 1:nrow(temp_rev)){
+  temp_rev[i,4]=100*temp_rev[i,3]/sum(temp_rev[,3])
+}
+
+temp_all=all_referrers_table
+temp_all[3]="All referrers"
+temp_all=temp_all[c(3,1,2)]
+temp_all[4]=NA
+names(temp_all)=c("Type", "Age", "Frequency", "Percentage")
+
+#Remove users who haven't provided data
+temp_all=temp_all[-which(temp_all[,2]=="0. No Age listed"),]
+
+#Calculate percentage
+for(i in 1:nrow(temp_all)){
+  temp_all[i,4]=100*temp_all[i,3]/sum(temp_all[,3])
+}
+
+#Merge the tables and plot them
+temp_table=rbind(temp_rev, temp_all)
+temp_table[,2]=as.character(temp_table[,2])
+ggplot(temp_table, aes(x=Age, y=Percentage, fill=Type)) + geom_bar(position="dodge", stat="identity")
