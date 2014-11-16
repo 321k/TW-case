@@ -86,3 +86,14 @@ area1=length(unique(user_referral$id_user))
 area2=length(unique(referral_weekly_data$id_user))
 cross.area=length(intersect(unique(user_referral$id_user), unique(referral_weekly_data$id_user)))
 draw.pairwise.venn(area1, area2, cross.area, category=c("User_referral user id", "Referral_weekly_data user id"), fill=c("blue", "red"),  cat.pos = c(0, 180))
+
+#Overlap between revolutionaries(user_referral$id_user) and referral_weekly_data$c
+dataset1=survey_revolutionaries
+dataset2=unique(referral_weekly_data$id_user)
+name1="Revolutionaries"
+name2="All referrers"
+area1=length(dataset1)
+area2=length(dataset2)
+cross.area=length(intersect(dataset1, dataset2))
+draw.pairwise.venn(area1, area2, cross.area, category=c(name1, name2), fill=c("blue", "red"),  cat.pos = c(30, 180), cex=c(2,2,2), cat.cex=c(2,2), margin=0.04)
+
