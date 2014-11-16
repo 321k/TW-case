@@ -10,13 +10,13 @@ all_referrers=unique(referral_weekly_data[c(1, 8)])
 all_referrers=all_referrers[c(2,1)]
 all_referrers_table=as.data.frame(table(all_referrers[,1]))
 names(all_referrers_table)=c("Age", "Frequency")
-ggplot(all_referrers_table, aes(x=Age, y=Frequency))+geom_bar(stat="identity", fill="#00C6FF", color="black")
+#ggplot(all_referrers_table, aes(x=Age, y=Frequency))+geom_bar(stat="identity", fill="#00C6FF", color="black")
 
-#Age distribution
+###Age distribution
 revolutionaries_table=revolutionaries[,5]
 revolutionaries_table=as.data.frame(table(revolutionaries_table))
 names(revolutionaries_table)=c("Age", "Frequency")
-ggplot(revolutionaries_table, aes(x=Age, y=Frequency))+geom_bar(stat="identity", fill="#00C6FF", color="black")
+#ggplot(revolutionaries_table, aes(x=Age, y=Frequency))+geom_bar(stat="identity", fill="#00C6FF", color="black")
 
 #Compare all_referrers and the revolutionaries
 temp_rev=revolutionaries_table
