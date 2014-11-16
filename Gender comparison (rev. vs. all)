@@ -1,0 +1,27 @@
+#Revolutionaries
+survey_revolutionaries=survey_responses[which(survey_responses[,3]=="made me feel like I'm part of a revolution"),1]
+
+
+#All referrers
+all_referrers=survey_responses[which(survey_responses[,2]=="Gender"),]
+all_referrers[,3]=as.factor(as.character(all_referrers[,3]))
+gender_all=as.data.frame(as.factor(as.character(all_referrers[,3])))
+gender_all[2]="All"
+gender_all=gender_all[c(2,1)]
+
+names(gender_all)=c("Gender", "Type")
+
+revolutionaries=all_referrers[all_referrers[,1] %in% survey_revolutionaries,]
+gender_rev=as.data.frame(as.factor(as.character(revolutionaries[,3])))
+gender_rev[2]="Revolutionaries"
+gender_rev=gender_rev[c(2,1)]
+names(gender_rev)=c("Gender", "Type")
+
+gender_table=as.data.frame(table(rbind(gender_rev,gender_all)))
+gender_table[4]=NA
+names(gender_table)=c("Type", "Gender", "Frequency", "Percentage")
+subset=which(gender_table$Type=="All")
+gender_table[subset,4]=100*gender_table[subset,3]/sum(gender_table[subset,3])
+subset=which(gender_table$Type=="Revolutionaries")
+gender_table[subset,4]=100*gender_table[subset,3]/sum(gender_table[subset,3])
+ggplot(gender_table, aes(x=Gender, y=Percentage, fill=Type)) + geom_bar(position="dodge", stat="identity")
