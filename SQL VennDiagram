@@ -1,0 +1,42 @@
+CREATE TABLE revolutionaries
+(
+id_user varchar(255)
+);
+
+CREATE TABLE all_referrers
+(
+id_user varchar(255)
+);
+
+CREATE TABLE venndiagram
+(
+type varchar(255),
+value integer
+);
+
+INSERT INTO revolutionaries
+SELECT id_user 
+FROM survey_responses
+WHERE question_response='made me feel like I''m part of a revolution';
+
+INSERT INTO all_referrers
+SELECT DISTINCT id_user
+FROM referral_weekly_data;
+
+INSERT INTO venndiagram (type) VALUES ('all_referers');
+INSERT INTO venndiagram (value) VALUES (
+SELECT COUNT(*) from all_referrers
+);
+
+INSERT INTO venndiagram (type) VALUES ('revolutionaries');
+INSERT INTO venndiagram (value) VALUES (
+SELECT COUNT(*) from revolutionaries
+);
+
+INSERT INTO venndiagram (type) VALUES ('overlap');
+INSERT INTO venndiagram (value) VALUES (
+SELECT id_user
+FROM all_referrers
+INNER JOIN all_referrers
+ON all_referrers.id_user = revolutoinaries.id_user;
+);
