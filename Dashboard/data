@@ -1,1 +1,123 @@
+library(ggplot2)
+
+###Subset based on when user was created
 data=referral_weekly_data
+#data[,5]=as.Date(paste(data[,5], "-1", sep=""), "%Y-%W-%u")
+#data[,10]=as.Date(paste(data[,10], "-1", sep=""), "%Y-%U-%u")
+weeks=as.character(unique(data[,5])[order(unique(data[,5]))])
+weeks_subset=weeks[(length(weeks)-12):(length(weeks)-1)]
+data_subset=data[which(data[,5] %in% weeks_subset),]
+a=c(1,2,3,5,6,7,8)
+for(i in a) data_subset[,i]=as.character(data_subset[,i])
+
+#New users
+newUsersByWeek=as.data.frame(table(data_subset[,5]))
+names(newUsersByWeek)=c("Week", "Users")
+newUsersByWeek[,1]=as.Date(paste(newUsersByWeek[,1], "-1", sep=""), "%Y-%W-%u")
+newUsersByWeek[(ncol(newUsersByWeek)+1)]="New users"
+names(newUsersByWeek)[ncol(newUsersByWeek)]="Type"
+
+ggplot(newUsersByWeek, aes(x=Week, y=Users))+geom_line()
+
+#New referrals
+newReferralsByWeek=as.data.frame(table(data_subset[,10]))
+names(newReferralsByWeek)=c("Week", "Users")
+newReferralsByWeek[,1]=as.Date(paste(newReferralsByWeek[,1], "-1", sep=""), "%Y-%W-%u")
+
+newReferralsByWeek[(ncol(newReferralsByWeek)+1)]="New referrals"
+names(newReferralsByWeek)[ncol(newReferralsByWeek)]="Type"
+
+ggplot(newReferralsByWeek, aes(x=Week, y=Referrals))+geom_line()
+
+
+#New referrals and users
+newRefAndUser=rbind(newReferralsByWeek, newUsersByWeek)
+ggplot(newRefAndUser, aes(x=Week, y=Users, color=Type))+geom_line()
+
+#New users by country
+newUsersByCountryAndWeek=as.data.frame(table(data_subset[,5:6]))
+names(newUsersByCountryAndWeek)=c("Week", "Country", "Users")
+newUsersByCountryAndWeek[,1]=as.Date(paste(newUsersByCountryAndWeek[,1], "-1", sep=""), "%Y-%W-%u")
+
+#Biggest gainers/losers
+first4Weeks=weeks_subset[1:4]
+first4Weeks=as.Date(paste(first4Weeks, "-1", sep=""), "%Y-%W-%u")
+last4Weeks=weeks_subset[(length(weeks_subset)-3):length(weeks_subset)]
+last4Weeks=as.Date(paste(last4Weeks, "-1", sep=""), "%Y-%W-%u")
+
+countries_table=as.data.frame(unique(newUsersByCountryAndWeek[,2]))
+countries_table[2:4]=NA
+
+for(i in 1:nrow(countries_table)){
+  countries_subset=newUsersByCountryAndWeek[which(newUsersByCountryAndWeek[,2]==countries_table[i,1]),]
+  countries_subset_first=countries_subset[which(countries_subset[,1] %in% first4Weeks),]
+  countries_subset_last=countries_subset[which(countries_subset[,1] %in% last4Weeks),]
+  countries_table[i,2]=mean(countries_subset_first[,3])
+  countries_table[i,3]=mean(countries_subset_last[,3])
+}
+countries_table=countries_table[-which(countries_table[,2]<5),]
+countries_table[,4]=100*countries_table[,3]/countries_table[,2]
+countries_table=countries_table[order(countries_table[,4]),]
+countries_table_losers=countries_table[1:3,]
+countries_table_winners=countries_table[(nrow(countries_table)-2):nrow(countries_table),]
+newUsersByCountryAndWeek_winners=newUsersByCountryAndWeek[which(newUsersByCountryAndWeek[,2] %in% countries_table_winners[,1]),]
+newUsersByCountryAndWeek_winners[(ncol(newUsersByCountryAndWeek_winners)+1)]="Winners"
+names(newUsersByCountryAndWeek_winners)[4]="Type"
+
+newUsersByCountryAndWeek_losers=newUsersByCountryAndWeek[which(newUsersByCountryAndWeek[,2] %in% countries_table_losers[,1]),]
+newUsersByCountryAndWeek_losers[(ncol(newUsersByCountryAndWeek_losers)+1)]="Losers"
+names(newUsersByCountryAndWeek_losers)[4]="Type"
+
+newUsersByCountryAndWeek_subset=rbind(newUsersByCountryAndWeek_losers, newUsersByCountryAndWeek_winners)
+
+ggplot(newUsersByCountryAndWeek_losers, aes(x=Week, y=Users, colour=Country))+geom_line(size=1)
+ggplot(newUsersByCountryAndWeek_winners, aes(x=Week, y=Users, colour=Country))+geom_line(size=1)
+
+#new users by age group
+newUsersByAge=as.data.frame(table(data_subset[,8]))
+names(newUsersByAge)=c("Age", "Frequency")
+ggplot(newUsersByAge, aes(x=Age, y=Frequency))+geom_bar(stat="identity")
+
+#Subset based on when user converted
+data=referral_weekly_data
+weeks=as.character(unique(data[,12])[order(unique(data[,12]))])
+weeks_subset=weeks[(length(weeks)-12):(length(weeks)-1)]
+data_subset=data[which(data[,12] %in% weeks_subset),]
+a=c(1,2,3,5,6,7,8)
+for(i in a) data_subset[,i]=as.character(data_subset[,i])
+
+#Converted/not converted
+conversionsByWeek=as.data.frame(table(data_subset[,12]))
+names(conversionsByWeek)=c("Week", "Units")
+conversionsByWeek[,1]=as.Date(paste(conversionsByWeek[,1], "-1", sep=""), "%Y-%W-%u")
+conversionsByWeek[3]="Conversions"
+names(conversionsByWeek)[3]="Type"
+ggplot(conversionsByWeek, aes(x=Week, y=Converts))+geom_line()
+
+#Time to conversion
+selector=which(!is.na(data_subset[,11]))
+timeToConversion=as.data.frame(data_subset[selector,12])
+timeToConversion[,2]=as.Date(data_subset[selector,11])-as.Date(data_subset[selector,9])
+timeToConversion_table=as.data.frame(unique(timeToConversion[,1]))
+for(i in 1:nrow(timeToConversion_table)){
+timeToConversion_table[i,2]=mean(as.numeric(timeToConversion[which(timeToConversion[,1]==timeToConversion_table[i,1]),2]))
+}
+names(timeToConversion_table)=c("Week", "Units")
+timeToConversion_table[,1]=as.Date(paste(timeToConversion_table[,1], "-1", sep=""), "%Y-%W-%u")
+timeToConversion_table[3]="Days until conversion"
+names(timeToConversion_table)[3]="Type"
+ggplot(timeToConversion_table, aes(x=Week, y=Days))+geom_line()
+
+#Referred user lifetime value
+valueByWeek=unique(as.data.frame(data_subset[,12]))
+valueByWeek[2:4]=NA
+for(i in 1:nrow(valueByWeek)){
+  valueByWeek[i,2]=sum(data_subset[which(data_subset[,12]==valueByWeek[i,1]),17])
+  valueByWeek[i,3]=length(data_subset[which(data_subset[,12]==valueByWeek[i,1]),17])
+}
+valueByWeek[,4]=valueByWeek[,2]/valueByWeek[,3]
+names(valueByWeek)=c("Week", "Total_value", "New_conversions", "Average_value")
+valueByWeek[,1]=as.Date(paste(valueByWeek[,1], "-1", sep=""), "%Y-%W-%u")
+ggplot(valueByWeek, aes(x=Week, y=Average_value))+geom_line()
+ggplot(valueByWeek, aes(x=Week, y=Total_value))+geom_line()
+
