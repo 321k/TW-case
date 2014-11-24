@@ -4,6 +4,7 @@
 library(tseries)
 library(pastecs)
 library(e1071)
+library(ggplot2)
 
 temp_ref=all_ref_table
 temp_ref[ncol(temp_ref)+1]="All users"
